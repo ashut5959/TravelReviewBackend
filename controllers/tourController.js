@@ -1,8 +1,9 @@
 const Tour = require('../models/tourModel.js');
 const APIFeatures = require('../utils/apiFeatures.js');
-const catchAsync = require('../utils/catchAsync.js')
-const AppError = require('../utils/appError.js')
-
+const catchAsync = require('../utils/catchAsync.js');
+const AppError = require('../utils/appError.js');
+const factory = require('./handlerFactory.js');
+const { updateOne } = require('../models/userModel.js');
 
 
 
@@ -73,34 +74,22 @@ exports.addTour = catchAsync(async (req, res, next) => {
   // }
 });
 
-exports.updateTour = catchAsync(async (req, res, next) => {
-  
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+exports.updateTour = factory.updateOne(Tour);
 
-  if(!tour) {
-    return next(new AppError('content not found for given ID',404))
-  }
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
 
-exports.deleteTour = catchAsync(async (req, res) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
-  if(!tour) {
-    return next(new AppError('content not found for given ID',404))
-  }
-    res.status(204).json({
-      status: 'deleted',
-      data: null,
-    });
-});
+exports.deleteTour = factory.deleteOne(Tour);
+// exports.deleteTour = catchAsync(async (req, res) => {
+//   const tour = await Tour.findByIdAndDelete(req.params.id);
+//   if(!tour) {
+//     return next(new AppError('content not found for given ID',404))
+//   }
+//     res.status(204).json({
+//       status: 'deleted',
+//       data: null,
+//     });
+// });
+
+
 
 exports.getTourStats = catchAsync(async (req, res) => {
   const stats = await Tour.aggregate([

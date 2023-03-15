@@ -20,12 +20,14 @@ router.patch(
 router.get('/', userController.getAllUser);
 // router.route('/').get(userController.getAllUser).post(userController.addUser);
 
-// router
-//   .route('/:id')
-//   .get(userController.getUser)
-//   .patch(userController.updateUser)
-//   .delete(userController.deleteUser);
-
-
+router
+  .route('/:id')
+  .get(userController.getUser)
+  .patch(userController.updateUser)
+  .delete(
+    authController.protect,
+    authController.ristrictTo('admin'),
+    userController.deleteUser
+  );
 
 module.exports = router;
