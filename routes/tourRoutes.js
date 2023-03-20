@@ -1,7 +1,6 @@
 const express = require('express');
 const tourController = require('../controllers/tourController.js');
 const authController = require('../controllers/authController.js');
-// const reviewController = require('../controllers/reviewController.js');
 const reviewRouter = require('./reviewRoutes.js');
 const router = express.Router();
 router
@@ -26,18 +25,40 @@ router
     tourController.deleteTour
   );
 
-// router
-// .route('/:tourId/reviews')
-// .post(
-//   authController.protect,
-//   authController.ristrictTo('user'),
-//   reviewController.createReview
-// );
+  
+  router.use('/:tourId/reviews', reviewRouter);
+  
+  module.exports = router;
+  
 
-router.use('/:tourId/reviews', reviewRouter);
 
-module.exports = router;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // router
+  // .route('/:tourId/reviews')
+  // .post(
+  //   authController.protect,
+  //   authController.ristrictTo('user'),
+  //   reviewController.createReview
+  // );
 // app.use(express.json());
 
 // app.get("/", (req, res) => {

@@ -6,11 +6,14 @@ const factory = require('./handlerFactory.js');
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
   let filter = {};
-  console.log(req.params.tourId)
-  if (req.params.tourId) filter = { tourRef: req.params.tourId };
+
+  // console.log(req.params.tourId)
+  if (req.params.tourId) {
+   filter = {tourRef: req.params.tourId}
+  }
   console.log(filter);
   const reviews = await Review.find(filter);
-    console.log()
+  // console.log(Review.find(filter))
   res.status(200).json({
     status: 'Success',
     results: reviews.length,
@@ -34,4 +37,5 @@ exports.createReview = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.updateReview = factory.updateOne(Review);
 exports.deleteReview = factory.deleteOne(Review);
