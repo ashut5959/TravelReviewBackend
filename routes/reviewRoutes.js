@@ -10,6 +10,7 @@ router
   .post(
     authController.protect,
     authController.ristrictTo('user'),
+    reviewController.setTourUsersIds,
     reviewController.createReview
   );
 

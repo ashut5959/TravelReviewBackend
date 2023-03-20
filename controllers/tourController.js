@@ -5,12 +5,18 @@ const AppError = require('../utils/appError.js');
 const factory = require('./handlerFactory.js');
 const { updateOne } = require('../models/userModel.js');
 
+
+
+
+
 exports.topTours = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-averageRating,price';
   req.query.fields = 'name,price,averageRating,summary,difficulty';
   next();
 };
+
+
 
 exports.getAllTours = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Tour.find(), req.query)
@@ -20,6 +26,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
     .pagination();
   const tours = await features.query;
 
+  
   // SEND REQUEST
   res.status(200).json({
     status: 'success',
@@ -31,24 +38,21 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate('reviews');
-  // Tor.findOne({_id: req.params.id})
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
+  const tour = await Tour.findById(req.params.id).populate('reviews')
+    // Tor.findOne({_id: req.params.id})
+    if(!tour) {
+      return next(new AppError('No tour found with that ID',404))
+    }
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour,
+      },
+    });
 });
 
 // exports.addTour = catchAsync(async (req, res, next) => {
-//   // const newTours = new Tour({});
-//   // newTours.save();
-
 //   const newTour = await Tour.create(req.body);
 //     res.status(201).json({
 //       status: 'Success',
@@ -56,19 +60,11 @@ exports.getTour = catchAsync(async (req, res, next) => {
 //         tour: newTour,
 //       },
 //     });
-
-//   // try {
-
-//   // } catch (error) {
-//   //   res.status(400).json({
-//   //     status: 'failed',
-//   //     message: error,
-//   //   });
-//   // }
 // });
-
+// exports.getTour =factory.getOne(Tour, reviews)
 exports.addTour = factory.createOne(Tour);
 exports.updateTour = factory.updateOne(Tour);
+
 
 exports.deleteTour = factory.deleteOne(Tour);
 // exports.deleteTour = catchAsync(async (req, res) => {
@@ -81,6 +77,8 @@ exports.deleteTour = factory.deleteOne(Tour);
 //       data: null,
 //     });
 // });
+
+
 
 exports.getTourStats = catchAsync(async (req, res) => {
   const stats = await Tour.aggregate([
@@ -116,45 +114,45 @@ exports.getTourStats = catchAsync(async (req, res) => {
 
 exports.getMonthlyPlan = catchAsync(async (req, res) => {
   const year = req.params.year * 1;
-  const plan = await Tour.aggregate([
-    {
-      $unwind: '$startDates',
-    },
-    {
-      $match: {
-        startDates: {
-          $gte: new Date(`${year}-01-01`),
-          $lte: new Date(`${year}-12-31`),
+    const plan = await Tour.aggregate([
+      {
+        $unwind: '$startDates',
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
         },
       },
-    },
-    {
-      $group: {
-        _id: { $month: '$startDates' },
-        numTourStarts: { $sum: 1 },
-        tours: { $push: '$name' },
+      {
+        $group: {
+          _id: { $month: '$startDates' },
+          numTourStarts: { $sum: 1 },
+          tours: { $push: '$name' },
+        },
       },
-    },
-    {
-      $addFields: { month: '$_id' },
-    },
-    {
-      $project: {
-        _id: 0,
+      {
+        $addFields: { month: '$_id' },
       },
-    },
-    {
-      $sort: { numTourStarts: -1 },
-    },
-    {
-      $limit: 12,
-    },
-  ]);
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+      {
+        $sort: { numTourStarts: -1 },
+      },
+      {
+        $limit: 12,
+      },
+    ]);
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      plan,
-    },
-  });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        plan,
+      },
+    });
 });
