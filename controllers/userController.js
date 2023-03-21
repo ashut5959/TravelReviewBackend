@@ -40,15 +40,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllUser = async (req, res) => {
-  const users = await User.find();
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users,
-    },
-  });
-};
+exports.getAllUser = factory.getAll(User);
 exports.getUser = factory.getOne(User)
 exports.addUser = (req, res) => {
   res.status(500).json({
