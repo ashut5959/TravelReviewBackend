@@ -8,73 +8,37 @@ router
   .get(tourController.topTours, tourController.getAllTours);
 
 router.route('/get-stats').get(tourController.getTourStats);
-router.route('/monthly-plans/:year').get(tourController.getMonthlyPlan);
+router
+  .route('/monthly-plans/:year')
+  .get(
+    authController.protect,
+    authController.ristrictTo('admin', 'lead-guide', 'guide'),
+    tourController.getMonthlyPlan
+  );
 
 router
   .route('/')
-  .get(authController.protect, tourController.getAllTours)
-  .post(tourController.addTour);
+  .get(tourController.getAllTours)
+  .post(
+    authController.protect,
+    authController.ristrictTo('admin', 'lead-guide'),
+    tourController.addTour
+  );
 
 router
   .route('/:id')
   .get(tourController.getTour)
-  .patch(tourController.updateTour)
+  .patch(
+    authController.protect,
+    authController.ristrictTo('admin', 'lead-guide'),
+    tourController.updateTour
+  )
   .delete(
     authController.protect,
     authController.ristrictTo('admin'),
     tourController.deleteTour
   );
 
-  
-  router.use('/:tourId/reviews', reviewRouter);
-  
-  module.exports = router;
-  
+router.use('/:tourId/reviews', reviewRouter);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // router
-  // .route('/:tourId/reviews')
-  // .post(
-  //   authController.protect,
-  //   authController.ristrictTo('user'),
-  //   reviewController.createReview
-  // );
-// app.use(express.json());
-
-// app.get("/", (req, res) => {
-//   res
-//     .status(200)
-//     .json({ message: "My name is asutosh paul", app: "Natourous" });
-// });
-
-// app.post('/reaper', (req,res) => {
-//     res.send("mello");
-// })
-
-// 3) ROUTES
-
-// app.get('/api/v1/tours', getAllTours );
-// app.get('/api/v1/tours/:id', getTour);
-// app.post('/api/v1/tours', addTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour);
+module.exports = router;

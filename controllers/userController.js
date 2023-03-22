@@ -40,8 +40,6 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getAllUser = factory.getAll(User);
-exports.getUser = factory.getOne(User)
 exports.addUser = (req, res) => {
   res.status(500).json({
     status: 'error',
@@ -49,6 +47,12 @@ exports.addUser = (req, res) => {
   });
 };
 
-// do not update password with this 
+exports.getMe = (req,res,next) => {
+  req.params.id = req.user.id;
+  next();
+}
+
+exports.getUser = factory.getOne(User);
+exports.getAllUser = factory.getAll(User);
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
