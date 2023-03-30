@@ -121,16 +121,20 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+// tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1 ,ratingsAverage: -1});
+tourSchema.index({ slug: 1});
+
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
 // virtual populate
 tourSchema.virtual('reviews', {
-  ref:'Review',
+  ref: 'Review',
   foreignField: 'tourRef',
-  localField: '_id'
-})
+  localField: '_id',
+});
 
 //DOCUMENT MIDDLEWARE: run before .save() and .create() nad not for update(])
 tourSchema.pre('save', function (next) {
