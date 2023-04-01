@@ -94,3 +94,22 @@ exports.getMonthlyPlan = catchAsync(async (req, res) => {
     },
   });
 });
+
+exports.getToursWithIn = (req, res, next) => {
+  const { distance, unit, letlng } = req.params;
+  const [lat, lng] = letlng.split(',');
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'Plese provide latitude and longitude in the format lat,lng',
+        400
+      )
+    );
+  }
+
+  console.log(distance, lat, lng, unit);
+  res.status(200).json({
+    status: 'success',
+  });
+};

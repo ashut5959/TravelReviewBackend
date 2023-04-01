@@ -80,6 +80,10 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
   }
 };
 
+reviewSchema.index({ tourRef: 1, userRef: 1 }, { unique: true });
+// reviewSchema.dropIndex({tourRef: 1, userRef: 1});
+// reviewSchema.ensureIndex({tourRef: 1, userRef : 1}, {unique:true, dropDups : true}); 
+
 reviewSchema.post('save', function () {
   // this points to current review
   // let tourRef = this.tourRef.toString().replace(/new ObjectId\("(.*)"\)/, "$1");

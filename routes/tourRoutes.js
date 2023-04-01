@@ -25,6 +25,11 @@ router
     tourController.addTour
   );
 
+router.route(
+  '/tours-within/:distance/center/:lating/unit/:unit',
+  tourController.getToursWithIn
+);
+
 router
   .route('/:id')
   .get(tourController.getTour)
