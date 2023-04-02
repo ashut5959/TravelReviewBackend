@@ -35,7 +35,7 @@ const tourSchema = new mongoose.Schema(
       default: 4.5,
       min: [1, 'Ratings must be above 1.0'],
       max: [5, 'Rating must be below 5 or equal'],
-      set: val => Math.round(val * 10) / 10
+      set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
       type: Number,
@@ -123,8 +123,9 @@ const tourSchema = new mongoose.Schema(
 );
 
 // tourSchema.index({ price: 1 });
-tourSchema.index({ price: 1 ,ratingsAverage: -1});
-tourSchema.index({ slug: 1});
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
@@ -161,6 +162,32 @@ tourSchema.pre(/^find/, function (next) {
 //   console.log(doc);
 //   next();
 // })
+
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+
+  this.startDates = Date.now();
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+  next();
+});
+
+tourSchema.post(/^find/, function (doc, next) {
+  console.log(`Query took ${Date.now() - this.startDates} milliseconds!`);
+  next();
+});
+
+// tourSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   console.log(this.pipeline());
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', tourSchema);
 
