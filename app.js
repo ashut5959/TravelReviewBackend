@@ -62,6 +62,13 @@ app.use((req, res, next) => {
   next();
 });
 
+
+app.get('/hello', () => {
+  res.send("hello world");
+})
+app.get('/',(req,res) => {
+  res.status(200).render('base');
+});
 app.use('/api/v1/tours', tourRouters);
 app.use('/api/v1/users', userRouters);
 app.use('/api/v1/reviews', reviewRouters);
